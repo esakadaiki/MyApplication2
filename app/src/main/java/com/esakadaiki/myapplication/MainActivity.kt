@@ -25,19 +25,10 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.graphics.RectF
 import android.app.Application
+import android.text.method.Touch
 
 
-
-
-
-
-
-
-
-
-
-
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     // Y軸最低スワイプ距離
     private val SWIPE_MIN_DISTANCE = 50
@@ -205,11 +196,10 @@ class MainActivity : AppCompatActivity() {
             "%1$02d:%2$02d:%3$02d".format(h, m ,s)
         }
     }
-
 }
 
 // SurfaceView
-internal class CustomSurfaceView(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
+class CustomSurfaceView(context: Context) : SurfaceView(context), SurfaceHolder.Callback, Runnable {
     var thread: Thread? = null
     var isAttached: Boolean = false
 
@@ -225,8 +215,6 @@ internal class CustomSurfaceView(context: Context) : SurfaceView(context), Surfa
     var curryR : Int = 0
     var curryG : Int = 0
     var curryB : Int = 0
-
-    private var countInterface: Interface? = null
 
     init {
 
@@ -327,8 +315,17 @@ internal class CustomSurfaceView(context: Context) : SurfaceView(context), Surfa
         private val rectHeight = 50f
     }
 
-    interface countInterface(){
-        fun getcount()
+}
+
+class GetTouchCount{
+    var count: Int = 0
+
+    fun getTouchCount(): Int{
+        return count
+    }
+
+    fun sendTouchCount(c: Int) {
+        count = c
     }
 
 }
