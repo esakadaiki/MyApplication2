@@ -44,14 +44,15 @@ class MainActivity : AppCompatActivity(){
     var timeValue = 0
     var touch_count = 0
 
-    //var mSurfaceView: CustomSurfaceView? = null
+    var mSurfaceView: CustomSurfaceView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.v("check", "onCreate")
 
         // View
-        setContentView(CustomSurfaceView(this))
+        mSurfaceView = CustomSurfaceView(this)
+        setContentView(mSurfaceView)
 
         Log.v("check", "setContentView")
 
@@ -101,6 +102,10 @@ class MainActivity : AppCompatActivity(){
                     touchResult.text = touch_count.toString()
                     touchCount.text = ""
                 }
+                //背景の四角の速さを変える
+                if(timeValue == 10*60){
+                    mSurfaceView?.speedUp()
+                }
             }
         }
 
@@ -113,6 +118,8 @@ class MainActivity : AppCompatActivity(){
             handler.post(runnableTime)
             touch_count = 0
             timeValue = 0
+            mSurfaceView?.reset_color()
+            mSurfaceView?.resetSpeed()
             handler.post(runnableCountText)
         }
 
@@ -178,6 +185,7 @@ class MainActivity : AppCompatActivity(){
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
             Log.v("check", "singletapup")
             touch_count++
+            mSurfaceView?.add_spice()
             Log.v("check", "count")
             return super.onSingleTapUp(e)
         }
@@ -196,6 +204,7 @@ class MainActivity : AppCompatActivity(){
             "%1$02d:%2$02d:%3$02d".format(h, m ,s)
         }
     }
+
 }
 
 // SurfaceView
@@ -209,6 +218,8 @@ class CustomSurfaceView(context: Context) : SurfaceView(context), SurfaceHolder.
     private var screenHeight: Float = 0.toFloat()
     private var xOffset = 0f
     private var yOffset = 0f
+
+    var time = 0
 
     var res = this.context.resources
     var curry_dish = BitmapFactory.decodeResource(res, R.drawable.curry_dish2)
@@ -296,7 +307,7 @@ class CustomSurfaceView(context: Context) : SurfaceView(context), SurfaceHolder.
         val rSrc = Rect(addX.toInt(), addY.toInt(), ((canvasWidth / toCanvasScale) + addX).toInt(), ((canvasHeight / toCanvasScale) + addY).toInt())
         val rDest = RectF(0f, 0f, canvasWidth.toFloat(), canvasHeight.toFloat())
 
-        paint.color = Color.rgb(150+(255/(255)),100,50)
+        paint.color = Color.rgb(150+curryR,100,50)
         paint.setStyle(Paint.Style.FILL)
         var rectf = RectF(((canvasWidth / 2) - bmpWidth * toCanvasScale / 3).toFloat(), ((canvasHeight / 2) - bmpHeight * toCanvasScale / 3).toFloat(), ((canvasWidth / 2) + bmpWidth * toCanvasScale / 3).toFloat(), ((canvasHeight / 2) + bmpHeight * toCanvasScale / 3).toFloat())
         canvas.drawOval(rectf, paint)
@@ -308,24 +319,33 @@ class CustomSurfaceView(context: Context) : SurfaceView(context), SurfaceHolder.
         holder.unlockCanvasAndPost(canvas)
     }
 
+    fun add_spice(){
+        if(curryR<105)curryR += 1
+    }
+
+    fun reset_color(){
+        curryR = 0
+    }
+
+    fun speedUp(){
+        dx = dx*2.5f
+        dy = dy*2.5f
+    }
+
+    fun resetSpeed(){
+        if(dx > 0)
+            dx = 5f
+        else
+            dx = -5f
+        if(dy > 0)
+            dy = 5f
+        else
+            dy = -5f
+    }
+
     companion object {
-
-
         private val rectWidth = 50f
         private val rectHeight = 50f
-    }
-
-}
-
-class GetTouchCount{
-    var count: Int = 0
-
-    fun getTouchCount(): Int{
-        return count
-    }
-
-    fun sendTouchCount(c: Int) {
-        count = c
     }
 
 }
